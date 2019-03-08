@@ -1,0 +1,19 @@
+services:
+    phpbbstudio.udp.listener.main:
+        class: phpbbstudio\udp\event\main_listener
+        arguments:
+            - '@auth'
+            - '@dbal.conn'
+            - '@request'
+            - '@user'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+        tags:
+            - { name: event.listener }
+
+    phpbbstudio.udp.listener.acp:
+        class: \phpbbstudio\udp\event\acp_listener
+        arguments:
+            - '@request'
+        tags:
+            - { name: event.listener }

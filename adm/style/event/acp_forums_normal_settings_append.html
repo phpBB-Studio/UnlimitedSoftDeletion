@@ -1,0 +1,16 @@
+<fieldset>
+	<legend>{{ lang('ACP_UDP_CAT') }}</legend>
+
+	<dl>
+		<dt>
+			<label for="udp_f_softdelete_all_on">{{ lang('ACP_FORUM_SOFTDELETE_ALL') ~ lang('COLON') }}</label>
+			<br>
+			<span>{{ lang('ACP_FORUM_SOFTDELETE_ALL_DESC') }}</span>
+		</dt>
+
+		<dd>
+			<label><input type="radio" class="radio" name="udp_f_softdelete_all" value="1" id="udp_f_softdelete_all_on"{% if S_FORUM_SOFTDELETE_ALL %} checked="checked"{% endif %} /> {{ lang('ENABLED') }}</label>
+			<label><input type="radio" class="radio" name="udp_f_softdelete_all" value="0" id="udp_f_softdelete_all_off"{% if not S_FORUM_SOFTDELETE_ALL %} checked="checked"{% endif %} /> {{ lang('DISABLED') }}</label>
+		</dd>
+	</dl>
+</fieldset>
