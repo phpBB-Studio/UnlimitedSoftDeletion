@@ -23,6 +23,7 @@ class main_listener implements EventSubscriberInterface
 	public static function getSubscribedEvents()
 	{
 		return array(
+			'core.user_setup_after'					=> 'udp_setup_lang',
 			'core.permissions'						=> 'udp_permissions',
 			'core.handle_post_delete_conditions'	=> 'udp_handle_post_delete_conditions',
 			'core.viewtopic_modify_post_row'		=> 'udp_viewtopic_modify_post_row',
@@ -34,6 +35,9 @@ class main_listener implements EventSubscriberInterface
 
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
+
+	/* @var \phpbb\language\language */
+	protected $language;
 
 	/** @var \phpbb\request\request */
 	protected $request;
@@ -52,6 +56,7 @@ class main_listener implements EventSubscriberInterface
 	 *
 	 * @param  \phpbb\auth\auth						$auth		Auth object
 	 * @param  \phpbb\db\driver\driver_interface	$db			Database object
+	 * @param  \phpbb\language\language				$language	Language object
 	 * @param  \phpbb\request\request				$request	Request object
 	 * @param  \phpbb\user							$user		User object
 	 * @param  string								$root_path	phpBB root path
@@ -62,6 +67,7 @@ class main_listener implements EventSubscriberInterface
 	public function __construct(
 		\phpbb\auth\auth $auth,
 		\phpbb\db\driver\driver_interface $db,
+		\phpbb\language\language $language,
 		\phpbb\request\request $request,
 		\phpbb\user $user,
 		$root_path,
@@ -70,10 +76,24 @@ class main_listener implements EventSubscriberInterface
 	{
 		$this->auth			= $auth;
 		$this->db			= $db;
+		$this->language		= $language;
 		$this->request		= $request;
 		$this->user			= $user;
+
 		$this->root_path	= $root_path;
 		$this->php_ext		= $php_ext;
+	}
+
+	/**
+	 * Load extension language file during user set up.
+	 *
+	 * @event  core.user_setup_after
+	 * @return void
+	 * @access public
+	 */
+	public function udp_setup_lang($event)
+	{
+		$this->language->add_lang('udp_common', 'phpbbstudio/udp');
 	}
 
 	/**
@@ -96,12 +116,12 @@ class main_listener implements EventSubscriberInterface
 			$event['categories'] = $categories;
 		}
 
-		$perms = array('u_udp');
-
-		foreach ($perms as $permission)
-		{
-			$permissions[$permission] = array('lang' => 'ACL_' . utf8_strtoupper($permission), 'cat' => 'phpbb_studio');
-		}
+		$permissions += [
+			'u_udp' => [
+				'lang'	=> 'ACL_U_UDP',
+				'cat'	=> 'phpbb_studio',
+			]
+		];
 
 		$event['permissions'] = $permissions;
 	}
@@ -110,7 +130,7 @@ class main_listener implements EventSubscriberInterface
 	 * Allows the user to softdelete the post (all permissions and conditions are ignored)
 	 *
 	 * @event  core.handle_post_delete_conditions
-	 * @param  \phpbb\event\object	$event		The event object
+	 * @param  \phpbb\event\data	$event		The event object
 	 * @return void
 	 * @access public
 	 */
@@ -135,7 +155,7 @@ class main_listener implements EventSubscriberInterface
 	 * Show the [X] button in the post row also to authed users
 	 *
 	 * @event  core.viewtopic_modify_post_row
-	 * @param  \phpbb\event\object	$event		The event object
+	 * @param  \phpbb\event\data	$event		The event object
 	 * @return void
 	 * @access public
 	 */
@@ -171,9 +191,7 @@ class main_listener implements EventSubscriberInterface
 
 		$post_id = (int) $event['row']['post_id'];
 
-		$softdelete_allowed = true;
-
-		$udp_post_link = append_sid("{$this->root_path}posting.$this->php_ext", 'mode=' . (($softdelete_allowed) ? 'soft_delete' : 'delete') . "&amp;f=$forum_id&amp;p=$post_id");
+		$udp_post_link = append_sid("{$this->root_path}posting.$this->php_ext", 'mode=soft_delete' . "&amp;f=$forum_id&amp;p=$post_id");
 
 		$event->update_subarray('post_row', 'U_DELETE', $udp_post_link);
 	}
@@ -201,5 +219,4 @@ class main_listener implements EventSubscriberInterface
 
 		return $s_enabled;
 	}
-
 }

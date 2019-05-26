@@ -12,6 +12,13 @@ namespace phpbbstudio\udp\migrations;
 
 class m1_install_permissions extends \phpbb\db\migration\migration
 {
+	/**
+	 * Assign migration file dependencies for this migration.
+	 *
+	 * @return array		Array of migration files
+	 * @access public
+	 * @static
+	 */
 	public static function depends_on()
 	{
 		return array('\phpbb\db\migration\data\v32x\v325');
@@ -29,5 +36,4 @@ class m1_install_permissions extends \phpbb\db\migration\migration
 			array('permission.add', array('u_udp')),
 		);
 	}
-
 }

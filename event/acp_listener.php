@@ -65,7 +65,7 @@ class acp_listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * New Forum added (default enabled).
+	 * New Forum (Add action) - Default enabled.
 	 *
 	 * @event  core.acp_manage_forums_initialise_data
 	 * @param  \phpbb\event\data	$event		The event object
@@ -76,7 +76,8 @@ class acp_listener implements EventSubscriberInterface
 	{
 		if ($event['action'] === 'add')
 		{
-			$event->update_subarray('forum_data', $event['forum_data']['udp_f_softdelete_all'], true);
+			/* Add our index to the existing array */
+			$event['forum_data'] += ['udp_f_softdelete_all'	=> true];
 		}
 	}
 

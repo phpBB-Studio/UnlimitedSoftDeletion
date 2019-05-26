@@ -12,6 +12,13 @@ namespace phpbbstudio\udp\migrations;
 
 class m2_install_roles extends \phpbb\db\migration\migration
 {
+	/**
+	 * Assign migration file dependencies for this migration.
+	 *
+	 * @return array		Array of migration files
+	 * @access public
+	 * @static
+	 */
 	public static function depends_on()
 	{
 		return array(
@@ -57,5 +64,4 @@ class m2_install_roles extends \phpbb\db\migration\migration
 
 		return $role_id;
 	}
-
 }

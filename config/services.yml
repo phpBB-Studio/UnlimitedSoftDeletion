@@ -4,6 +4,7 @@ services:
         arguments:
             - '@auth'
             - '@dbal.conn'
+            - '@language'
             - '@request'
             - '@user'
             - '%core.root_path%'
